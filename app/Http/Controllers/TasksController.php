@@ -2,21 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
+use Illuminate\Http\Request;
 
 class TasksController extends Controller
 {
-    public function list()
+
+    public function index()
     {
-        return view('pages.tasks');
+        return view('pages.todo', ['tasks' => Task::all()]);
     }
 
-    public function new()
+
+    public function create()
     {
-        return view('pages.new');
+        return view('pages.create');
     }
 
-    public function task()
+    public function store(Request $request)
     {
-        return view('pages.task');
+        (new Task([
+            'title' => $request->get('title'),
+            'content' => $request->get('content'),
+            ]))->save();
+        return redirect()->route('tasks.index');
+    }
+
+    public function edit(Task $task)
+    {
+        return view('pages.edit', ['task' => $task]);
+    }
+
+    public function update(Request $request, Task $task)
+    {
+        $task->update([
+            'title' => $request->get('title'),
+            'content' => $request->get('content'),
+            ]);
+        return redirect()->route('tasks.edit', $task);
+    }
+
+    public function destroy(Task $task)
+    {
+        $task->delete();
+        return redirect()->route('tasks.index');
     }
 }
