@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class TasksController extends Controller
@@ -12,7 +13,6 @@ class TasksController extends Controller
     {
         return view('pages.todo', ['tasks' => Task::all()]);
     }
-
 
     public function create()
     {
@@ -24,7 +24,8 @@ class TasksController extends Controller
         (new Task([
             'title' => $request->get('title'),
             'content' => $request->get('content'),
-            ]))->save();
+            'status' => 'created'
+        ]))->save();
         return redirect()->route('tasks.index');
     }
 
@@ -37,14 +38,21 @@ class TasksController extends Controller
     {
         $task->update([
             'title' => $request->get('title'),
-            'content' => $request->get('content'),
-            ]);
+            'content' => $request->get('content')
+        ]);
         return redirect()->route('tasks.edit', $task);
     }
 
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('tasks.index');
+        return redirect()->back();
+    }
+
+    public function complete(Task $task): RedirectResponse
+    {
+        $task->toggleComplete();
+        $task->save();
+        return redirect()->back();
     }
 }

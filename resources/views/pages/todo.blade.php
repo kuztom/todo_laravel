@@ -9,31 +9,63 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <table class="table-layout: auto">
-                        <thead>
+                    <table style="width: 800px">
+                        <thead style="text-align: left">
                         <tr>
-                            <th>Task</th>
+                            <th></th>
+                            <th></th>
+                            <th>Title</th>
                             <th>Details</th>
+                            <th></th>
+                            <th>Compleated At</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($tasks as $task)
                             <tr>
-                                <td><strong>{{ $task->title }}</strong></td>
-                                <td class="text-sm">{{ $task->content }}</td>
-                                <td class="text-blue-700"><a href="{{ route('tasks.edit', $task) }}">Edit</a></td>
-                                <td class="text-red-700" >
+                                <td class="text-green-700">
+                                    <form method="post" action="{{ route('tasks.complete', $task) }}">
+                                        @csrf
+                                        <button type="submit"
+                                                onclick="return confirm('Are You Ok?')">
+                                            @if(!$task->completed_at) Done @endif
+                                            @if($task->completed_at) Redo @endif
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <td class="text-red-700">
                                     <form method="post" action="{{ route('tasks.destroy', $task) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                onclick="confirm('Task will be deleted: {{ $task->title }} Proceed?')">
+                                                onclick="return confirm('Task will be deleted: {{ $task->title }} Proceed?')">
                                             Delete
                                         </button>
                                     </form>
                                 </td>
+
+                                </td>
+                                <td>
+                                    <strong>
+                                        @if($task->completed_at) <s> @endif
+                                            {{ $task->title }}
+                                            @if($task->completed_at) </s> @endif
+                                    </strong>
+                                </td>
+                                <td class="text-sm">
+                                    @if($task->completed_at) <s> @endif
+                                        {{ $task->content }}
+                                        @if($task->completed_at) </s> @endif
+                                </td>
+                                <td class="text-blue-700"><a href="{{ route('tasks.edit', $task) }}">Edit</a></td>
+                                @if($task->completed_at)
+                                    <td class="text-sm">
+                                        {{ $task->completed_at }}
+                                    </td>
+                                @endif
                             </tr>
-                            @endforeach
+                        @endforeach
                         </tbody>
                     </table>
 
