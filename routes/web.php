@@ -11,9 +11,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-//Route::get('/tasks/new', function () {
-//    return view('pages.new');
-//});
 
 Route::resource('tasks', TasksController::class);
 
