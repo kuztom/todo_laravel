@@ -11,7 +11,21 @@ class Task extends Model
 
     protected $fillable = [
         'title',
-        'content'
+        'content',
+        'status',
     ];
 
+    public function toggleComplete(): void
+    {
+        switch ($this->attributes['status']) {
+            case 'created':
+                $this->attributes['status'] = 'done';
+                break;
+            case 'done':
+                $this->attributes['status'] = 'created';
+                break;
+        }
+
+        $this->completed_at = $this->completed_at ? null : now();
+    }
 }
