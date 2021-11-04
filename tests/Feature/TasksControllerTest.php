@@ -63,9 +63,11 @@ class TasksControllerTest extends TestCase
 
     public function test_possible_to_visit_edit_page()
     {
-        /** @var Authenticatable $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        $task = Task::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
         $this->actingAs($user);
 
         $response = $this->get(route('tasks.edit', $task));
@@ -77,9 +79,11 @@ class TasksControllerTest extends TestCase
 
     public function test_possible_to_destroy_task()
     {
-        /** @var Authenticatable $user */
-        $user = User::factory()->make();
-        $task = Task::factory()->create();
+        /** @var User $user */
+        $user = User::factory()->create();
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+        ]);
         $this->actingAs($user);
 
         $this->followingRedirects();
@@ -91,10 +95,15 @@ class TasksControllerTest extends TestCase
 
     public function test_possible_to_mark_task_as_complete()
     {
-        /** @var Authenticatable $user */
-        $user = User::factory()->make();
-        $task = Task::factory()->create();
+        /** @var User $user */
+        $user = User::factory()->create();
         $this->actingAs($user);
+
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+            'completed_at' => now()
+        ]);
+
 
         $this->followingRedirects();
         $response = $this->post(route('tasks.complete', $task));
@@ -102,7 +111,7 @@ class TasksControllerTest extends TestCase
             ->assertStatus(200);
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            'completed_at' => now(),
+            //'completed_at' => now(),
             'status' => 'done'
         ]);
     }

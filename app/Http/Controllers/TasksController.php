@@ -11,7 +11,15 @@ class TasksController extends Controller
 
     public function index()
     {
-        return view('pages.todo', ['tasks' => Task::all()]);
+        $tasks = Task::where('user_id', auth()->user()->id)
+            ->orderBy('status', 'ASC')
+            ->get();
+
+        return view('pages.todo', ['tasks'=> $tasks]);
+
+
+        //return view('pages.todo', ['tasks' => auth()->user()->tasks()->get()]);
+        //return view('pages.todo', ['tasks' => Task::all()]);
     }
 
     public function create()
@@ -21,11 +29,13 @@ class TasksController extends Controller
 
     public function store(Request $request)
     {
-        (new Task([
+        $task = (new Task([
             'title' => $request->get('title'),
             'content' => $request->get('content'),
             'status' => 'created'
-        ]))->save();
+        ]));
+        $task->user()->associate(auth()->user());
+        $task->save();
         return redirect()->route('tasks.index');
     }
 
