@@ -28,4 +28,9 @@ class Task extends Model
 
         $this->completed_at = $this->completed_at ? null : now();
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
