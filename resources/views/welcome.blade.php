@@ -11,20 +11,24 @@
 
         <!-- Validation Errors -->
         <x-auth-validation-errors class="mb-4" :errors="$errors"/>
-
-
         <div class="flex items-center justify-center mt-4">
-
-            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
-                {{ __('LOG IN') }}
-            </a>
-
+            <p class="text-4xl">Best To-Do list manager</p>
         </div>
         <div class="flex items-center justify-center mt-4">
+            <p>Please log in to start</p>
+        </div>
 
-            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('register') }}">
-                {{ __('REGISTER') }}
-            </a>
+        <div class="flex items-center justify-center mt-4">
+
+            <button class="bg-blue-500 text-sm text-white hover:bg-blue-600 px-4 py-3 rounded"><a
+                    href="{{ route('login') }}">
+                    {{ __('LOG IN') }}
+                </a></button>
+            <span class="p-3"></span>
+            <button class="bg-blue-500 text-sm text-white hover:bg-blue-600 px-4 py-3 rounded"><a
+                    href="{{ route('register') }}">
+                    {{ __('REGISTER') }}
+                </a></button>
 
         </div>
 

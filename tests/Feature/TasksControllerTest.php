@@ -88,9 +88,8 @@ class TasksControllerTest extends TestCase
 
         $this->followingRedirects();
         $response = $this->delete(route('tasks.destroy', $task));
-        $response
-            ->assertStatus(200);
-        $this->assertDatabaseMissing('tasks', ['id' => $task->id,]);
+        $response->assertStatus(200);
+        $this->assertSoftDeleted('tasks', ['id' => $task->id]);
     }
 
     public function test_possible_to_mark_task_as_complete()
@@ -104,15 +103,31 @@ class TasksControllerTest extends TestCase
             'completed_at' => now()
         ]);
 
-
         $this->followingRedirects();
         $response = $this->post(route('tasks.complete', $task));
-        $response
-            ->assertStatus(200);
+        $response->assertStatus(200);
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
-            //'completed_at' => now(),
             'status' => 'done'
+        ]);
+    }
+
+    public function test_possible_to_restore_task()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $task = Task::factory()->create([
+            'user_id' => $user->id,
+            'deleted_at' => now()
+        ]);
+
+        $this->followingRedirects();
+        $response = $this->post(route('tasks.restore', $task));
+        $response->assertStatus(200);
+        $this->assertNotSoftDeleted('tasks', [
+            'id' => $task->id,
         ]);
     }
 }
