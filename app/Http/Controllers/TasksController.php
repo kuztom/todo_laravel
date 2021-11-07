@@ -12,14 +12,22 @@ class TasksController extends Controller
     public function index()
     {
         $tasks = Task::where('user_id', auth()->user()->id)
-            ->orderBy('status', 'ASC')
-            ->get();
+            ->orderBy('completed_at', 'ASC')
+            ->latest()
+            ->paginate(10);
 
-        return view('pages.todo', ['tasks'=> $tasks]);
+        return view('pages.todo', ['tasks' => $tasks]);
+    }
 
+    public function trash()
+    {
+        $tasks = Task::where('user_id', auth()->user()->id)
+            ->onlyTrashed()
+            ->orderBy('completed_at', 'ASC')
+            ->latest()
+            ->paginate(10);
 
-        //return view('pages.todo', ['tasks' => auth()->user()->tasks()->get()]);
-        //return view('pages.todo', ['tasks' => Task::all()]);
+        return view('pages.trash', ['tasks' => $tasks]);
     }
 
     public function create()
@@ -53,16 +61,32 @@ class TasksController extends Controller
         return redirect()->route('tasks.edit', $task);
     }
 
-    public function destroy(Task $task)
+    public function destroy(Task $task): RedirectResponse
     {
         $task->delete();
-        return redirect()->back();
+        return back();
+    }
+
+    public function restore($id)
+    {
+        $task = Task::onlyTrashed()->findOrFail($id);
+        $task->restore();
+        return back();
+    }
+
+    public function delete($id)
+    {
+        $task = Task::onlyTrashed()->findOrFail($id);
+        $task->forceDelete();
+        return back();
     }
 
     public function complete(Task $task): RedirectResponse
     {
         $task->toggleComplete();
         $task->save();
-        return redirect()->back();
+        return back();
     }
+
+
 }

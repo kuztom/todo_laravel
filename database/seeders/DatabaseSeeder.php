@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
         User::factory(4)->create([
             'password' => bcrypt('test')
         ])->each(function (User $user) {
-            Task::factory(8)->create([
+            Task::factory(20)->create([
                 'user_id' => $user->id
             ]);
         });
